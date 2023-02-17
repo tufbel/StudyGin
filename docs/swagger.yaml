@@ -52,7 +52,7 @@ paths:
             $ref: '#/definitions/models.UserModel'
         "400":
           description: Bad Request
-      summary: CreateUser
+      summary: createUser
       tags:
       - user
   /user/{name}:
@@ -75,7 +75,7 @@ paths:
             type: string
         "400":
           description: Bad Request
-      summary: DeleteUser
+      summary: deleteUser
       tags:
       - user
     get:
@@ -97,7 +97,7 @@ paths:
             $ref: '#/definitions/models.UserModel'
         "400":
           description: Bad Request
-      summary: GetUser
+      summary: getUser
       tags:
       - user
   /user/all:
@@ -116,7 +116,7 @@ paths:
             type: array
         "400":
           description: Bad Request
-      summary: AllUser
+      summary: allUsers
       tags:
       - user
 swagger: "2.0"

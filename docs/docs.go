@@ -53,7 +53,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "CreateUser",
+                "summary": "createUser",
                 "parameters": [
                     {
                         "description": "用户信息",
@@ -90,7 +90,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "AllUser",
+                "summary": "allUsers",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -119,7 +119,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "GetUser",
+                "summary": "getUser",
                 "parameters": [
                     {
                         "type": "string",
@@ -152,7 +152,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "DeleteUser",
+                "summary": "deleteUser",
                 "parameters": [
                     {
                         "type": "string",
