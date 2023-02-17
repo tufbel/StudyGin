@@ -1,7 +1,7 @@
 package models
 
 type UserModel struct {
-	Name   string `form:"name" json:"name"`     // 名称
-	Age    int    `form:"int" json:"age"`       // 年龄
-	MyType string `form:"myType" json:"myType"` // 类型
+	Name   string `json:"name"  form:"name"`      // 名称
+	Age    int    `json:"age" form:"age"`         // 年龄
+	MyType string `json:"my_type" form:"my_type"` // 类型
 }

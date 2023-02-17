@@ -4,7 +4,7 @@ definitions:
       age:
         description: 年龄
         type: integer
-      myType:
+      my_type:
         description: 类型
         type: string
       name:
@@ -53,6 +53,70 @@ paths:
         "400":
           description: Bad Request
       summary: CreateUser
+      tags:
+      - user
+  /user/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 用户ID
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+      summary: DeleteUser
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: 获取用户
+      parameters:
+      - description: 用户ID
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserModel'
+        "400":
+          description: Bad Request
+      summary: GetUser
+      tags:
+      - user
+  /user/all:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserModel'
+            type: array
+        "400":
+          description: Bad Request
+      summary: AllUser
       tags:
       - user
 swagger: "2.0"

@@ -3,6 +3,8 @@ package main
 import (
 	"StudyGin/docs"
 	"StudyGin/src"
+	"StudyGin/src/projectSettings"
+	"fmt"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -17,7 +19,8 @@ func main() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	webRouter := src.InitRouter()
-	webRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	webRouter.GET(projectSettings.RootURL+"/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	fmt.Printf("Docs: http://localhost:20088%s", projectSettings.RootURL+"/docs/index.html")
 	// Listen and Server in 0.0.0.0:20088
 	webRouter.Run(":20088")
 }
