@@ -15,11 +15,11 @@ type UserViewSets struct{}
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Success      200  {array}  models.UserModel
+// @Success      200  {array}  models.User
 // @Failure      400
 // @Router       /user/all [get]
 func (receiver *UserViewSets) allUsers(ctx *gin.Context) {
-	userObjSlice := []models.UserModel{
+	userObjSlice := []models.User{
 		{Name: "Tuffy", Age: 18, MyType: "mouse"},
 		{Name: "Tom", Age: 20, MyType: "cat"},
 	}
@@ -32,12 +32,12 @@ func (receiver *UserViewSets) allUsers(ctx *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        user body models.UserModel true "用户信息"
-// @Success      200  {object}  models.UserModel
+// @Param        user body models.User true "用户信息"
+// @Success      200  {object}  models.User
 // @Failure      400
 // @Router       /user [post]
 func (receiver *UserViewSets) createUser(ctx *gin.Context) {
-	var userObj models.UserModel
+	var userObj models.User
 	//if err := ctx.ShouldBind(&userObj); err != nil {
 	//	println("err ->", err.Error())
 	//	return
@@ -53,7 +53,7 @@ func (receiver *UserViewSets) createUser(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        name path string true "用户ID"
-// @Success      200  {object}  models.UserModel
+// @Success      200  {object}  models.User
 // @Failure      400
 // @Router       /user/{name} [get]
 func (receiver *UserViewSets) getUser(ctx *gin.Context) {
@@ -64,7 +64,7 @@ func (receiver *UserViewSets) getUser(ctx *gin.Context) {
 	} else {
 		println("Get id ->", id)
 	}
-	userObj := models.UserModel{Name: name, Age: 18, MyType: "mouse"}
+	userObj := models.User{Name: name, Age: 18, MyType: "mouse"}
 	ctx.JSON(http.StatusOK, userObj)
 }
 

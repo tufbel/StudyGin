@@ -8,7 +8,8 @@ import (
 )
 
 func InitRouter() (rootGin *gin.Engine) {
-	rootGin = gin.Default()
+	rootGin = gin.New()
+	rootGin.Use(gin.Logger(), gin.Recovery())
 
 	apiGroup := rootGin.Group(projectSettings.RootURL)
 
