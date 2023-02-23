@@ -1,18 +1,56 @@
+basePath: /api/study_gin
 definitions:
-  models.UserModel:
+  models.CreateUserSchema:
     properties:
-      age:
-        description: 年龄
-        type: integer
-      my_type:
-        description: 类型
+      email:
+        description: 邮箱
         type: string
       name:
         description: 名称
         type: string
+      password:
+        description: 密码
+        type: string
+    required:
+    - email
+    - name
+    - password
     type: object
+  models.UpdateUserSchema:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      name:
+        description: 用户名
+        type: string
+      password:
+        description: 密码
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      name:
+        description: 名称
+        type: string
+      password:
+        description: 密码
+        type: string
+      uid:
+        description: 用户ID
+        type: string
+    type: object
+host: localhost:20088
 info:
   contact: {}
+  description: This is a sample server
+  title: Swagger Example API
+  version: "1.0"
 paths:
   /:
     get:
@@ -42,20 +80,20 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.UserModel'
+          $ref: '#/definitions/models.CreateUserSchema'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserModel'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
       summary: createUser
       tags:
       - user
-  /user/{name}:
+  /user/{uid}:
     delete:
       consumes:
       - application/json
@@ -63,7 +101,7 @@ paths:
       parameters:
       - description: 用户ID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
       produces:
@@ -85,7 +123,7 @@ paths:
       parameters:
       - description: 用户ID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
       produces:
@@ -94,10 +132,38 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.UserModel'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
       summary: getUser
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: 更新用户
+      parameters:
+      - description: 用户ID
+        in: path
+        name: uid
+        required: true
+        type: string
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+      summary: updateUser
       tags:
       - user
   /user/all:
@@ -112,11 +178,14 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.UserModel'
+              $ref: '#/definitions/models.User'
             type: array
         "400":
           description: Bad Request
       summary: allUsers
       tags:
       - user
+schemes:
+- http
+- https
 swagger: "2.0"

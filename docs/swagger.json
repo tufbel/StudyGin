@@ -1,8 +1,17 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a sample server",
+        "title": "Swagger Example API",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:20088",
+    "basePath": "/api/study_gin",
     "paths": {
         "/": {
             "get": {
@@ -50,7 +59,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.CreateUserSchema"
                         }
                     }
                 ],
@@ -58,7 +67,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
@@ -86,7 +95,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserModel"
+                                "$ref": "#/definitions/models.User"
                             }
                         }
                     },
@@ -96,7 +105,7 @@
                 }
             }
         },
-        "/user/{name}": {
+        "/user/{uid}": {
             "get": {
                 "description": "获取用户",
                 "consumes": [
@@ -113,7 +122,7 @@
                     {
                         "type": "string",
                         "description": "用户ID",
-                        "name": "name",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -122,7 +131,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
@@ -146,7 +155,7 @@
                     {
                         "type": "string",
                         "description": "用户ID",
-                        "name": "name",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -162,23 +171,111 @@
                         "description": "Bad Request"
                     }
                 }
+            },
+            "patch": {
+                "description": "更新用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "updateUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "models.UserModel": {
+        "models.CreateUserSchema": {
             "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
             "properties": {
-                "age": {
-                    "description": "年龄",
-                    "type": "integer"
-                },
-                "my_type": {
-                    "description": "类型",
+                "email": {
+                    "description": "邮箱",
                     "type": "string"
                 },
                 "name": {
                     "description": "名称",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateUserSchema": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "uid": {
+                    "description": "用户ID",
                     "type": "string"
                 }
             }

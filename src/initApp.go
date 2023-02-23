@@ -3,6 +3,7 @@ package src
 import (
 	"StudyGin/src/projectSettings"
 	"StudyGin/src/routeGroups/index"
+	"StudyGin/src/routeGroups/middleware"
 	"StudyGin/src/routeGroups/user"
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,8 @@ func InitRouter() (rootGin *gin.Engine) {
 	rootGin.Use(gin.Logger(), gin.Recovery())
 
 	apiGroup := rootGin.Group(projectSettings.RootURL)
+
+	apiGroup.Use(middleware.GormMiddleware())
 
 	index.InitIndexGroup(apiGroup)
 	user.InitUserGroup(apiGroup)

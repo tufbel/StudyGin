@@ -3,8 +3,8 @@ package user
 import (
 	"StudyGin/src/models"
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/ksuid"
 	"net/http"
-	"strconv"
 )
 
 type UserViewSets struct{}
@@ -19,9 +19,10 @@ type UserViewSets struct{}
 // @Failure      400
 // @Router       /user/all [get]
 func (receiver *UserViewSets) allUsers(ctx *gin.Context) {
-	userObjSlice := []models.User{
-		{Name: "Tuffy", Age: 18, MyType: "mouse"},
-		{Name: "Tom", Age: 20, MyType: "cat"},
+	var userObjSlice []models.User
+	result := models.GormDB.Find(&userObjSlice)
+	if result.Error != nil {
+		panic(result.Error)
 	}
 	ctx.JSON(http.StatusOK, userObjSlice)
 }
@@ -32,17 +33,24 @@ func (receiver *UserViewSets) allUsers(ctx *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        user body models.User true "用户信息"
+// @Param        user body models.CreateUserSchema true "用户信息"
 // @Success      200  {object}  models.User
 // @Failure      400
 // @Router       /user [post]
 func (receiver *UserViewSets) createUser(ctx *gin.Context) {
-	var userObj models.User
-	//if err := ctx.ShouldBind(&userObj); err != nil {
-	//	println("err ->", err.Error())
-	//	return
-	//}
-	ctx.Bind(&userObj)
+	var userForm_ models.CreateUserSchema
+	if validationErr := ctx.ShouldBind(&userForm_); validationErr != nil {
+		panic(validationErr)
+	}
+	userObj := models.User{
+		Uid:      ksuid.New().String(),
+		Name:     userForm_.Name,
+		Email:    userForm_.Email,
+		Password: userForm_.Password,
+	}
+	if result_ := models.GormDB.Create(&userObj); result_.Error != nil {
+		panic(result_.Error)
+	}
 	ctx.JSON(http.StatusOK, userObj)
 }
 
@@ -52,19 +60,48 @@ func (receiver *UserViewSets) createUser(ctx *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        name path string true "用户ID"
+// @Param        uid path string true "用户ID"
 // @Success      200  {object}  models.User
 // @Failure      400
-// @Router       /user/{name} [get]
+// @Router       /user/{uid} [get]
 func (receiver *UserViewSets) getUser(ctx *gin.Context) {
-	name := ctx.Param("name")
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		println("Get id Error ->", err.Error(), ctx.Param("id"), ctx.Param("name"))
-	} else {
-		println("Get id ->", id)
+	uid := ctx.Param("uid")
+	userObj := models.User{Uid: uid}
+	if result_ := models.GormDB.First(&userObj); result_.Error != nil {
+		panic(result_.Error)
 	}
-	userObj := models.User{Name: name, Age: 18, MyType: "mouse"}
+	ctx.JSON(http.StatusOK, userObj)
+}
+
+// updateUser
+// @Summary      updateUser
+// @Description  更新用户
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        uid path string true "用户ID"
+// @Param        user body models.UpdateUserSchema true "用户信息"
+// @Success      200  {object}  models.User
+// @Failure      400
+// @Router       /user/{uid} [patch]
+func (receiver *UserViewSets) updateUser(ctx *gin.Context) {
+	uid := ctx.Param("uid")
+	var userForm models.UpdateUserSchema
+	if validationErr := ctx.ShouldBind(&userForm); validationErr != nil {
+		panic(validationErr)
+	}
+	userObj := models.User{Uid: uid}
+	if result_ := models.GormDB.First(&userObj); result_.Error != nil {
+		panic(result_.Error)
+	}
+	updateUser := models.User{
+		Name:     userForm.Name,
+		Email:    userForm.Email,
+		Password: userForm.Password,
+	}
+	if result_ := models.GormDB.Model(&userObj).Updates(updateUser); result_.Error != nil {
+		panic(result_.Error)
+	}
 	ctx.JSON(http.StatusOK, userObj)
 }
 
@@ -74,13 +111,18 @@ func (receiver *UserViewSets) getUser(ctx *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        name path string true "用户ID"
+// @Param        uid path string true "用户ID"
 // @Success      200  {string} string
 // @Failure      400
-// @Router       /user/{name} [delete]
+// @Router       /user/{uid} [delete]
 func (receiver *UserViewSets) deleteUser(ctx *gin.Context) {
-	name := ctx.Param("name")
-	ctx.String(http.StatusOK, "delete user "+name)
+	uid := ctx.Param("uid")
+	userObj := models.User{Uid: uid}
+	if result_ := models.GormDB.First(&userObj); result_.Error != nil {
+		panic(result_.Error)
+	}
+	models.GormDB.Delete(&userObj)
+	ctx.JSON(http.StatusOK, userObj)
 }
 
 func InitUserGroup(apiGroup *gin.RouterGroup) {
@@ -89,7 +131,8 @@ func InitUserGroup(apiGroup *gin.RouterGroup) {
 	{
 		user.GET("/all", userViewSetObj.allUsers)
 		user.POST("", userViewSetObj.createUser)
-		user.GET("/:name", userViewSetObj.getUser)
-		user.DELETE("/:name", userViewSetObj.deleteUser)
+		user.GET("/:uid", userViewSetObj.getUser)
+		user.PATCH("/:uid", userViewSetObj.updateUser)
+		user.DELETE("/:uid", userViewSetObj.deleteUser)
 	}
 }

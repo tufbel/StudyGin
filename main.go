@@ -1,33 +1,45 @@
 package main
 
 import (
-	"StudyGin/docs"
+	_ "StudyGin/docs"
 	"StudyGin/src"
 	"StudyGin/src/models"
 	"StudyGin/src/projectSettings"
-	"fmt"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"StudyGin/src/tools/myLog"
+	swagFiles "github.com/swaggo/files"
+	gSwag "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm/logger"
 )
 
-func Run() {
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server
+
+// @host      localhost:20088
+// @BasePath  /api/study_gin
+
+// @schemes http https
+func main() {
+	{
+		myLog.InitLogger()
+	}
 	webRouter := src.InitRouter()
 
 	// 添加swagger文档
 	{
-		docs.SwaggerInfo.Title = "StudyGin Example API"
-		docs.SwaggerInfo.Description = "This is a sample server."
-		docs.SwaggerInfo.Version = "1.0"
-		docs.SwaggerInfo.Host = "localhost:20088"
-		docs.SwaggerInfo.BasePath = "/api/study_gin"
-		docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		webRouter.GET(projectSettings.RootURL+"/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		fmt.Printf("Docs: http://localhost:20088%s", projectSettings.RootURL+"/docs/index.html")
+		//docs.SwaggerInfo.Title = "StudyGin Example API"
+		//docs.SwaggerInfo.Description = "This is a sample server."
+		//docs.SwaggerInfo.Version = "1.0"
+		//docs.SwaggerInfo.Host = "localhost:20088"
+		//docs.SwaggerInfo.BasePath = "/api/study_gin"
+		//docs.SwaggerInfo.Schemes = []string{"http", "https"}
+		webRouter.GET(projectSettings.RootURL+"/docs/*any", gSwag.WrapHandler(swagFiles.Handler))
+		myLog.Logger.Debug("Docs: http://localhost:20088" + projectSettings.RootURL + "/docs/index.html")
 	}
 
 	// startup
 	{
-		models.StartupDB()
+		models.StartupDB(map[string]interface{}{"logLevel": logger.Info})
 	}
 
 	// Listen and Server in 0.0.0.0:20088
@@ -35,10 +47,6 @@ func Run() {
 
 	// shutdown
 	{
-		defer models.StartupDB()
+		defer models.ShutdownDB()
 	}
-}
-
-func main() {
-
 }

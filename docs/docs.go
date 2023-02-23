@@ -61,7 +61,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.CreateUserSchema"
                         }
                     }
                 ],
@@ -69,7 +69,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
@@ -97,7 +97,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserModel"
+                                "$ref": "#/definitions/models.User"
                             }
                         }
                     },
@@ -107,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{name}": {
+        "/user/{uid}": {
             "get": {
                 "description": "获取用户",
                 "consumes": [
@@ -124,7 +124,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户ID",
-                        "name": "name",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -133,7 +133,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.UserModel"
+                            "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
@@ -157,7 +157,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户ID",
-                        "name": "name",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -173,23 +173,111 @@ const docTemplate = `{
                         "description": "Bad Request"
                     }
                 }
+            },
+            "patch": {
+                "description": "更新用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "updateUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "models.UserModel": {
+        "models.CreateUserSchema": {
             "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
             "properties": {
-                "age": {
-                    "description": "年龄",
-                    "type": "integer"
-                },
-                "my_type": {
-                    "description": "类型",
+                "email": {
+                    "description": "邮箱",
                     "type": "string"
                 },
                 "name": {
                     "description": "名称",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateUserSchema": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "用户名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "uid": {
+                    "description": "用户ID",
                     "type": "string"
                 }
             }
@@ -199,12 +287,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "1.0",
+	Host:             "localhost:20088",
+	BasePath:         "/api/study_gin",
+	Schemes:          []string{"http", "https"},
+	Title:            "Swagger Example API",
+	Description:      "This is a sample server",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

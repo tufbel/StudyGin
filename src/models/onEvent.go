@@ -1,6 +1,7 @@
 package models
 
 import (
+	"StudyGin/src/tools/myLog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -11,9 +12,18 @@ var (
 	GormDB *gorm.DB
 )
 
-func StartupDB() {
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+func StartupDB(kwargs map[string]interface{}) {
+	myLog.Logger.Debug("Start connect to database ...")
+
+	var logLevel logger.LogLevel
+	if level_, ok := kwargs["logLevel"]; ok {
+		logLevel = level_.(logger.LogLevel)
+	} else {
+		logLevel = logger.Warn
+	}
+
+	dsn := "root:satncs@tcp(10.64.5.70:30036)/FastAPI?charset=utf8mb4&parseTime=True&loc=Local"
+	gdb, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                      dsn,  // DSN data source name
 		DefaultStringSize:        256,  // string 类型字段的默认长度
 		DisableDatetimePrecision: true, // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
@@ -21,13 +31,16 @@ func StartupDB() {
 		DontSupportRenameColumn:  true, // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		//SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // 日志配置
+		Logger:                                   logger.Default.LogMode(logLevel), // 日志配置
+		DisableForeignKeyConstraintWhenMigrating: true,                             // 迁移时禁用外键约束
 	})
 	if err != nil {
 		panic("failed to connect database:" + err.Error())
 	}
+	myLog.Logger.Info("Connect to database ... success")
+	GormDB = gdb
 
-	poolDB, err := gormDB.DB()
+	poolDB, err := GormDB.DB()
 	if err != nil {
 		panic("failed to get poolDB on init:" + err.Error())
 	}
@@ -39,6 +52,8 @@ func StartupDB() {
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	poolDB.SetConnMaxLifetime(time.Minute)
+
+	myLog.Logger.Info("Configure the database connection pool ... success")
 }
 
 func ShutdownDB() {
