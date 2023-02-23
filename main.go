@@ -4,7 +4,7 @@ import (
 	_ "StudyGin/docs"
 	"StudyGin/src"
 	"StudyGin/src/models"
-	"StudyGin/src/projectSettings"
+	"StudyGin/src/project_settings"
 	"StudyGin/src/tools/myLog"
 	swagFiles "github.com/swaggo/files"
 	gSwag "github.com/swaggo/gin-swagger"
@@ -33,8 +33,8 @@ func main() {
 		//docs.SwaggerInfo.Host = "localhost:20088"
 		//docs.SwaggerInfo.BasePath = "/api/study_gin"
 		//docs.SwaggerInfo.Schemes = []string{"http", "https"}
-		webRouter.GET(projectSettings.RootURL+"/docs/*any", gSwag.WrapHandler(swagFiles.Handler))
-		myLog.Logger.Debug("Docs: http://localhost:20088" + projectSettings.RootURL + "/docs/index.html")
+		webRouter.GET(project_settings.RootURL+"/docs/*any", gSwag.WrapHandler(swagFiles.Handler))
+		myLog.Logger.Debug("Docs: http://localhost:20088" + project_settings.RootURL + "/docs/index.html")
 	}
 
 	// startup
