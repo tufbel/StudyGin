@@ -14,7 +14,7 @@ func InitRouter() (rootGin *gin.Engine) {
 
 	apiGroup := rootGin.Group(project_settings.RootURL)
 
-	apiGroup.Use(middleware.GormMiddleware())
+	apiGroup.Use(middleware.ExceptionCaptureMiddleware)
 
 	index.InitIndexGroup(apiGroup)
 	user.InitUserGroup(apiGroup)
